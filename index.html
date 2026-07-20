@@ -130,6 +130,35 @@
       color: #aaa;
       margin-top: 5px;
     }
+
+    .hero-type-toggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .toggle-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 16px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      background: #fafafa;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .toggle-option:has(input:checked) {
+      border-color: #7c3aed;
+      background: #f5f3ff;
+      color: #7c3aed;
+    }
+
+    .toggle-option input { display: none; }
   </style>
 </head>
 <body>
@@ -163,18 +192,33 @@
         </div>
 
         <div class="field">
-          <label>Hero YouTube URL</label>
-          <input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=...">
+          <label>Hero 类型</label>
+          <div class="hero-type-toggle">
+            <label class="toggle-option"><input type="radio" name="hero-type" value="video" checked> 视频</label>
+            <label class="toggle-option"><input type="radio" name="hero-type" value="image"> 图片</label>
+          </div>
         </div>
 
-        <div class="field">
-          <label>视频上传日期</label>
-          <input id="hero-video-upload-date" type="date">
+        <div id="hero-video-fields">
+          <div class="field">
+            <label>Hero YouTube URL</label>
+            <input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+          <div class="field">
+            <label>视频上传日期</label>
+            <input id="hero-video-upload-date" type="date">
+          </div>
+          <div class="field">
+            <label>视频长度</label>
+            <input id="hero-video-duration" type="text" placeholder="5:30">
+          </div>
         </div>
 
-        <div class="field">
-          <label>视频长度</label>
-          <input id="hero-video-duration" type="text" placeholder="5:30">
+        <div id="hero-image-fields" style="display:none">
+          <div class="field">
+            <label>Hero 图片 CDN 路径</label>
+            <input id="hero-image-url" type="text" placeholder="https://cdn.meshy.ai/tutorials/...">
+          </div>
         </div>
 
         <div class="field">
@@ -223,9 +267,11 @@
       const date      = formatDate(document.getElementById('date').value);
       const imgFolder = document.getElementById('img-folder').value.trim() || slug;
       const cover     = document.getElementById('cover').value.trim() || (slug ? `${slug}-cover.webp` : '');
+      const heroType        = document.querySelector('input[name="hero-type"]:checked').value;
       const youtube         = document.getElementById('youtube').value.trim();
       const videoUploadDate = formatDate(document.getElementById('hero-video-upload-date').value);
       const videoDuration   = document.getElementById('hero-video-duration').value.trim();
+      const heroImageUrl    = document.getElementById('hero-image-url').value.trim();
       const author    = document.getElementById('author').value.trim();
       const btnText   = document.getElementById('btn-text').value.trim();
       const btnUrl    = document.getElementById('btn-url').value.trim();
@@ -235,13 +281,20 @@
         `2.发布日期：${date}`,
         `3.cover图在cdn的位置：https://cdn.meshy.ai/tutorials/${imgFolder}/${cover}`,
         `4.配图已上传至cdn：https://cdn.meshy.ai/tutorials/${imgFolder} 文件夹下，与md里的图片名大小写完全一致。`,
-        `5.hero YouTube视频网址：${youtube}`,
-        `6.视频上传日期：${videoUploadDate}`,
-        `7.视频长度：${videoDuration}`,
-        `8.作者名：${author}，聚合页显示Meshy AI即可。`,
-        `9.Hero部分的按钮修改为${btnText}，链接为 ${btnUrl}`,
-        `10.文章全文及Meta Title、Meta Description已使用markdown格式添加至附件。`,
       ];
+
+      if (heroType === 'video') {
+        lines.push(`5.hero YouTube视频网址：${youtube}`);
+        lines.push(`6.视频上传日期：${videoUploadDate}`);
+        lines.push(`7.视频长度：${videoDuration}`);
+      } else {
+        lines.push(`5.hero图片在cdn的位置：${heroImageUrl}`);
+      }
+
+      let n = lines.length + 1;
+      lines.push(`${n++}.作者名：${author}，聚合页显示Meshy AI即可。`);
+      lines.push(`${n++}.Hero部分的按钮修改为${btnText}，链接为 ${btnUrl}`);
+      lines.push(`${n++}.文章全文及Meta Title、Meta Description已使用markdown格式添加至附件。`);
 
       document.getElementById('output').value = lines.join('\n');
     }
@@ -272,8 +325,17 @@
       generate();
     });
 
-    ['date', 'youtube', 'hero-video-upload-date', 'hero-video-duration', 'author', 'btn-text', 'btn-url'].forEach(id => {
+    ['date', 'youtube', 'hero-video-upload-date', 'hero-video-duration', 'hero-image-url', 'author', 'btn-text', 'btn-url'].forEach(id => {
       document.getElementById(id).addEventListener('input', generate);
+    });
+
+    document.querySelectorAll('input[name="hero-type"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const isVideo = this.value === 'video';
+        document.getElementById('hero-video-fields').style.display = isVideo ? '' : 'none';
+        document.getElementById('hero-image-fields').style.display = isVideo ? 'none' : '';
+        generate();
+      });
     });
 
     function copyOutput() {
