@@ -168,6 +168,16 @@
         </div>
 
         <div class="field">
+          <label>视频上传日期</label>
+          <input id="hero-video-upload-date" type="date">
+        </div>
+
+        <div class="field">
+          <label>视频长度</label>
+          <input id="hero-video-duration" type="text" placeholder="5:30">
+        </div>
+
+        <div class="field">
           <label>作者名</label>
           <input id="author" type="text" placeholder="Sally">
         </div>
@@ -213,7 +223,9 @@
       const date      = formatDate(document.getElementById('date').value);
       const imgFolder = document.getElementById('img-folder').value.trim() || slug;
       const cover     = document.getElementById('cover').value.trim() || (slug ? `${slug}-cover.webp` : '');
-      const youtube   = document.getElementById('youtube').value.trim();
+      const youtube         = document.getElementById('youtube').value.trim();
+      const videoUploadDate = formatDate(document.getElementById('hero-video-upload-date').value);
+      const videoDuration   = document.getElementById('hero-video-duration').value.trim();
       const author    = document.getElementById('author').value.trim();
       const btnText   = document.getElementById('btn-text').value.trim();
       const btnUrl    = document.getElementById('btn-url').value.trim();
@@ -224,9 +236,11 @@
         `3.cover图在cdn的位置：https://cdn.meshy.ai/tutorials/${imgFolder}/${cover}`,
         `4.配图已上传至cdn：https://cdn.meshy.ai/tutorials/${imgFolder}文件夹下，与md里的图片名大小写完全一致。`,
         `5.hero YouTube视频网址：${youtube}`,
-        `6.作者名：${author}，聚合页显示Meshy AI即可。`,
-        `7.Hero部分的按钮修改为${btnText}，链接为 ${btnUrl}`,
-        `8.文章全文及Meta Title、Meta Description已使用markdown格式添加至附件。`,
+        `6.视频上传日期：${videoUploadDate}`,
+        `7.视频长度：${videoDuration}`,
+        `8.作者名：${author}，聚合页显示Meshy AI即可。`,
+        `9.Hero部分的按钮修改为${btnText}，链接为 ${btnUrl}`,
+        `10.文章全文及Meta Title、Meta Description已使用markdown格式添加至附件。`,
       ];
 
       document.getElementById('output').value = lines.join('\n');
@@ -258,7 +272,7 @@
       generate();
     });
 
-    ['date', 'youtube', 'author', 'btn-text', 'btn-url'].forEach(id => {
+    ['date', 'youtube', 'hero-video-upload-date', 'hero-video-duration', 'author', 'btn-text', 'btn-url'].forEach(id => {
       document.getElementById(id).addEventListener('input', generate);
     });
 
