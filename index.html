@@ -216,8 +216,8 @@
 
         <div id="hero-image-fields" style="display:none">
           <div class="field">
-            <label>Hero 图片 CDN 路径</label>
-            <input id="hero-image-url" type="text" placeholder="https://cdn.meshy.ai/tutorials/...">
+            <label>Banner 文件名</label>
+            <input id="hero-banner" type="text" value="banner.webp">
           </div>
         </div>
 
@@ -271,7 +271,7 @@
       const youtube         = document.getElementById('youtube').value.trim();
       const videoUploadDate = formatDate(document.getElementById('hero-video-upload-date').value);
       const videoDuration   = document.getElementById('hero-video-duration').value.trim();
-      const heroImageUrl    = document.getElementById('hero-image-url').value.trim();
+      const heroBanner      = document.getElementById('hero-banner').value.trim();
       const author    = document.getElementById('author').value.trim();
       const btnText   = document.getElementById('btn-text').value.trim();
       const btnUrl    = document.getElementById('btn-url').value.trim();
@@ -288,7 +288,7 @@
         lines.push(`6.视频上传日期：${videoUploadDate}`);
         lines.push(`7.视频长度：${videoDuration}`);
       } else {
-        lines.push(`5.hero图片在cdn的位置：${heroImageUrl}`);
+        lines.push(`5.hero图片在cdn的位置：https://cdn.meshy.ai/tutorials/${imgFolder}/${heroBanner}`);
       }
 
       let n = lines.length + 1;
@@ -325,7 +325,7 @@
       generate();
     });
 
-    ['date', 'youtube', 'hero-video-upload-date', 'hero-video-duration', 'hero-image-url', 'author', 'btn-text', 'btn-url'].forEach(id => {
+    ['date', 'youtube', 'hero-video-upload-date', 'hero-video-duration', 'hero-banner', 'author', 'btn-text', 'btn-url'].forEach(id => {
       document.getElementById(id).addEventListener('input', generate);
     });
 
